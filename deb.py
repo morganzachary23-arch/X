@@ -6,134 +6,192 @@ import time
 import os
 from concurrent.futures import ThreadPoolExecutor
 
-# Colors
-BOLD = '\033[1m'
-R = '\033[91m'
-G = '\033[92m'
-Y = '\033[93m'
-D = '\033[0m'
-C = '\033[96m'
+BOLD = '[1m'
+R = '[91m'
+G = '[92m'
+Y = '[93m'
+D = '[0m'
+C = '[96m'
 
 def logo():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f'{BOLD}{C}\n       _____ __      ___                \n      / __(_) /__   / _ \\__ ____ _  ___ \n     / _// / / -_) / // / // /  \' \\/ _ \\\n    /_/ /_/_/\\__/ /____/\\_,_/_/_/_/ .__/\n                                 /_/    \n\n            FB File Maker V-2.0 (Patched)\n {D}')
-
-def get_random_ua():
-    # প্রতিবার আলাদা ইউজার এজেন্ট পাঠালে ব্লক হওয়ার চান্স কমে
-    uas = [
-        "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
-        "Mozilla/5.0 (Linux; Android 12; Pixel 6 Build/SD1A.210817.036) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"
-    ]
-    return random.choice(uas)
-
-def checker(uname):
-    try:
-        # Headers optimized to look like a real browser
-        headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json, text/plain, */*',
-            'User-Agent': get_random_ua(),
-            'Referer': 'https://8z1021.com/bd/en/register',
-            'Origin': 'https://8z1021.com'
-        }
-        
-        url_path = '/api/wv/v1/user/registerPreCheck'
-        json_data = {
-            'languageTypeId': 1, 
-            'currencyTypeId': 8, 
-            'userId': uname, 
-            'phone': str(random.randint(1300000000, 1999999999)), # Random phone number
-            'friendReferrerCode': '', 
-            'captcha': '', 
-            'callingCode': '880', 
-            'registerTypeId': 0, 
-            'random': str(random.randint(1000, 9999))
-        }
-
-        conn = http.client.HTTPSConnection('8z1021.com', timeout=15)
-        conn.request('POST', url_path, json.dumps(json_data), headers)
-        response = conn.getresponse()
-        raw_res = response.read().decode('utf-8')
-
-        if not raw_res:
-            return False
-
-        # JSON Load করার আগে চেক করা
-        try:
-            data = json.loads(raw_res)
-        except json.JSONDecodeError:
-            # যদি HTML বা ক্যাপচা পেজ আসে
-            print(f'{R} [!] IP Temporarily Flagged. Changing IP Recommended.{D}')
-            time.sleep(5) 
-            return False
-
-        if data.get('status') == 'F0003':
-            return True
-        elif data.get('status') == 'S0001' or "limit" in raw_res.lower():
-            print(f'{R} [RATE LIMIT] RELOADING VPN/DATA...{D}')
-            time.sleep(20)
-            return False
-            
-    except Exception as e:
-        # print(f'{R} Connection Error: {e}{D}')
-        time.sleep(5)
-        return False
-    return False
-
-def check_username(username):
-    uname = username.replace(' ', '').split('|')[0]
-    if checker(uname):
-        print(f'{BOLD}{G} [VALID] {uname}{D}')
-        with open('.uids.txt', 'a') as file:
-            file.write(username + '\n')
-    # একটি রিকোয়েস্টের পর সামান্য বিরতি যাতে API ব্লক না করে
-    time.sleep(random.uniform(0.5, 1.5))
+    print(f'{BOLD}{C}\n       _____ __      ___                \n      / __(_) /__   / _ \\__ ____ _  ___ \n     / _// / / -_) / // / // /  \' \\/ _ \\\n    /_/ /_/_/\\__/ /____/\\_,_/_/_/_/ .__/\n                                 /_/    \n\n            FB File Maker V-2.0\n {D}')
 
 def username_gen(names, start, end):
     usernames = []
     for name in names.split(','):
         for num in range(start, end + 1):
-            username = f'{name.strip().lower()}{num} | {name.strip().capitalize()}'
+            username = f'{name.strip().lower()}{num} | {name.capitalize()}'
             usernames.append(username)
     return usernames
 
+def checker(uname):
+    try:
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (X11; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36 OPR/70.0.3728.95',
+            'Mozilla/5.0 (Windows NT 10.0; WOW64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36 OPR/70.0.3728.95',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36 OPR/70.0.3728.95',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36 OPR/70.0.3728.95',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0',
+            'Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
+            'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729; rv:11.0) like Gecko',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+        ]
+        
+        headers = {
+            'sec-ch-ua': '\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"',
+            'sec-ch-ua-mobile': '?1',
+            'User-Agent': random.choice(user_agents),
+            'sec-ch-ua-arch': '\"\"',
+            'Content-Type': 'application/json',
+            'sec-ch-ua-full-version': '\"139.0.7339.0\"',
+            'Accept': 'application/json, text/plain, */*',
+            'sec-ch-ua-platform-version': '\"14.0.0\"',
+            'Referer': 'https://baji999.net/bd/en/register',
+            'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"',
+            'sec-ch-ua-bitness': '\"\"',
+            'sec-ch-ua-model': '\"LE2101\"',
+            'sec-ch-ua-platform': '\"Android\"'
+        }
+        
+        url = 'https://baji999.net/api/wv/v1/user/registerPreCheck'
+        json_data = {
+            'languageTypeId': 1,
+            'currencyTypeId': 8,
+            'userId': uname,
+            'phone': '1347054625',
+            'friendReferrerCode': '',
+            'captcha': '',
+            'callingCode': '880',
+            'registerTypeId': 0,
+            'random': str(random.randint(1000, 9999))
+        }
+        
+        conn = http.client.HTTPSConnection('baji999.net')
+        conn.request('POST', '/api/wv/v1/user/registerPreCheck', json.dumps(json_data), headers)
+        response = conn.getresponse()
+        data = json.loads(response.read())
+        
+        if data['status'] == 'F0003':
+            return True
+        if data['status'] == 'S0001':
+            print(f'{R} [RATE LIMIT] PLEASE TURN OFF DATA FOR 10 SEC...!{D}')
+            time.sleep(30)
+            return False
+            
+    except Exception as e:
+        time.sleep(10)
+        print(f'{R} ERROR >> {e}{D}')
+        return False
+        
+    return False
+
+def check_username(username):
+    uname = username.replace(' ', '').split('|')[0]
+    if checker(uname):
+        print(f'{BOLD}{G} [FB] {uname}{D}')
+        with open('.uids.txt', 'a') as file:
+            file.write(username + '\n')
+
 def main():
     logo()
-    names = input(f'{BOLD}{G} ENTER NAMES (Sadek,Tanvir) : {D}')
-    start = int(input(f'{BOLD}{Y} START NUMBER : {D}'))
-    end = int(input(f'{BOLD}{Y} END NUMBER : {D}'))
-    
-    print(f'\n{G} [1] LOW SPEED (Safe)\n{Y} [2] MEDIUM SPEED\n{R} [3] HIGH SPEED (Risky){D}\n')
+    print(f'{BOLD}{Y} ENTER NAMES BY USING COMMA (,) Eg : (Sadek,Tanvir, Sagor) Etc{D}\n')
+    names = input(f'{BOLD}{G} ENTER NAMES : {D}')
+    print('')
+    start = int(input(f'{BOLD}{Y} START (Eg : 1 ) : '))
+    end = int(input(f'{BOLD}{Y} END (Eg : 10000 ) : '))
+    print('')
+    print(f'{G} [1] LOW SPEED')
+    print(f'{Y} [2] MEDIUM SPEED')
+    print(f'{R} [3] HIGH SPEED{D}\n')
+    print('')
     speed = int(input(f'{C} CHOOSE : {D}'))
-    
-    # থ্রেড সংখ্যা কমিয়ে রাখা হয়েছে ব্লক এড়াতে
-    spd = {1: 2, 2: 5, 3: 8}.get(speed, 2)
-
-    if os.path.exists('.uids.txt'):
-        with open('.uids.txt', 'w') as f: f.write("") # Clear file
-        
+    if speed == 1:
+        spd = 3
+    elif speed == 2:
+        spd = 6
+    elif speed == 3:
+        spd = 12
+    else:
+        spd = 3
+    clear_file()
     usernames = username_gen(names, start, end)
     random.shuffle(usernames)
-    
-    print(f'\n{BOLD}{G} TOTAL USERNAMES : {len(usernames)} {D}')
+    print('')
+    print(f'{BOLD}{G} TOTAL USERNAMES : {len(usernames)} {D}')
     print(f'{BOLD}{G} ----------------------------------------{D}')
-    
     with ThreadPoolExecutor(max_workers=spd) as executor:
         executor.map(check_username, usernames)
-    
     print(f'{BOLD}{G} ---------------------------------------{D}')
-    print(f'\n{BOLD}{G} CHECKING COMPLETED!{D}\n')
+    total = sum((1 for _ in open('.uids.txt')))
+    print(f'\n{BOLD}{G} TOTAL{Y}{total}{G} VALID FB IDS FOUND{D}\n\n')
 
-# Switch and Setup function logic here (keeping yours)
+def clear_file():
+    with open('.uids.txt', 'w') as file:
+        pass
+
 def switch():
+    s = requests.get('https://raw.githubusercontent.com/havecode17/dg/refs/heads/main/switch').text
+    if 'ON' in s:
+        return
+    print(f'\n{BOLD}{R} THIS TOOL HAS DISABLED BY ADMIN!{D}')
+    exit(0)
+
+def setup_username():
     try:
-        s = requests.get('https://raw.githubusercontent.com/havecode17/dg/refs/heads/main/switch', timeout=10).text
-        if 'ON' not in s:
-            print(f'\n{BOLD}{R} THIS TOOL HAS DISABLED BY ADMIN!{D}')
-            exit(0)
-    except: pass
+        with open('.name.txt') as f:
+            if f.read().strip():
+                return
+    except FileNotFoundError:
+        username = input(f'{Y} ENTER TELEGRAM USERNAME: {D}').strip()
+        if not username.startswith('@'):
+            username = '@' + username
+        with open('.name.txt', 'w') as f:
+            f.write(username)
 
 if __name__ == '__main__':
+    setup_username()
     switch()
     main()
