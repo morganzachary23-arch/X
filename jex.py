@@ -15,7 +15,7 @@ C = '\033[96m'
 
 def logo():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f'{BOLD}{C}\n       _____ __      ___                \n      / __(_) /__   / _ \\__ ____ _  ___ \n     / _// / / -_) / // / // /  \' \\/ _ \\\n    /_/ /_/_/\\__/ /____/\\_,_/_/_/_/ .__/\n                                 /_/    \n\n            FB File Maker V-2.0\n {D}')
+    print(f'{BOLD}{C}\n       _____ __      ___                \n      / __(_) /__   / _ \\__ ____ _  ___ \n     / _// / / -_) / // / // /  \' \\/ _ \\\n    /_/ /_/_/\\__/ /____/\\_,_/_/_/_/ .__/\n                                 /_/    \n\n            IG File Maker V-2.0\n {D}')
 
 def username_gen(names, start, end):
     usernames = []
@@ -28,10 +28,34 @@ def username_gen(names, start, end):
 def checker(uname):
     while True:
         try:
-            headers = {'sec-ch-ua': '\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"', 'sec-ch-ua-mobile': '?1', 'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36', 'sec-ch-ua-arch': '\"\"', 'Content-Type': 'application/json', 'sec-ch-ua-full-version': '\"139.0.7339.0\"', 'Accept': 'application/json, text/plain, */*', 'sec-ch-ua-platform-version': '\"14.0.0\"', 'Referer': 'https://jeetbuzz.cc/bd/bn/register', 'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 'sec-ch-ua-bitness': '\"\"', 'sec-ch-ua-model': '\"LE2101\"', 'sec-ch-ua-platform': '\"Android\"'}
-            url = 'https://jeetbuzz.cc/api/wv/v1/user/registerPreCheck'
-            json_data = {'languageTypeId': 1, 'currencyTypeId': 8, 'userId': uname, 'phone': '1347054625', 'friendReferrerCode': '', 'captcha': '', 'callingCode': '880', 'registerTypeId': 0, 'random': str(random.randint(1000, 9999))}
-            conn = http.client.HTTPSConnection('jeetbuzz.cc')
+            headers = {
+                'sec-ch-ua': '\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"', 
+                'sec-ch-ua-mobile': '?1', 
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36', 
+                'sec-ch-ua-arch': '\"\"', 
+                'Content-Type': 'application/json', 
+                'sec-ch-ua-full-version': '\"139.0.7339.0\"', 
+                'Accept': 'application/json, text/plain, */*', 
+                'sec-ch-ua-platform-version': '\"14.0.0\"', 
+                'Referer': 'https://jeetbuzz.me/bd/en/register', 
+                'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 
+                'sec-ch-ua-bitness': '\"\"', 
+                'sec-ch-ua-model': '\"LE2101\"', 
+                'sec-ch-ua-platform': '\"Android\"'
+            }
+            url = 'https://jeetbuzz.me/api/wv/v1/user/registerPreCheck'
+            json_data = {
+                'languageTypeId': 1, 
+                'currencyTypeId': 8, 
+                'userId': uname, 
+                'phone': '1347054625', 
+                'friendReferrerCode': '', 
+                'captcha': '', 
+                'callingCode': '880', 
+                'registerTypeId': 0, 
+                'random': str(random.randint(1000, 9999))
+            }
+            conn = http.client.HTTPSConnection('jeetbuzz.me')
             conn.request('POST', '/api/wv/v1/user/registerPreCheck', json.dumps(json_data), headers)
             response = conn.getresponse()
             data = json.loads(response.read())
@@ -42,7 +66,7 @@ def checker(uname):
             elif data['status'] == 'S0001':
                 print(f'{R} [RATE LIMIT] PLEASE TURN OFF DATA FOR 10 SEC...!{D}')
                 time.sleep(30)
-                continue  # Retry the same user
+                continue  # Retry the same user like dex.py
             
             else:
                 return False
@@ -50,12 +74,12 @@ def checker(uname):
         except Exception as e:
             time.sleep(10)
             print(f'{R} ERROR >> {e}{D}')
-            continue  # Retry on error
+            continue  # Retry on error like dex.py
 
 def check_username(username):
     uname = username.replace(' ', '').split('|')[0]
     if checker(uname):
-        print(f'{BOLD}{G} [FB] {uname}{D}')
+        print(f'{BOLD}{G} [IG] {uname}{D}')
         with open('.uids.txt', 'a') as file:
             file.write(username + '\n')
 
@@ -90,7 +114,7 @@ def main():
         executor.map(check_username, usernames)
     print(f'{BOLD}{G} ---------------------------------------{D}')
     total = sum((1 for _ in open('.uids.txt')))
-    print(f'\n{BOLD}{G} TOTAL{Y}{total}{G} VALID FB IDS FOUND{D}\n\n')
+    print(f'\n{BOLD}{G} TOTAL{Y}{total}{G} VALID IG IDS FOUND{D}\n\n')
 
 def clear_file():
     with open('.uids.txt', 'w') as file:
