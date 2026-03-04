@@ -33,12 +33,11 @@ def create_session():
         # Fake UserAgent তৈরি
         ua = UserAgent()
         
-        # র‍্যান্ডম ব্রাউজার সেটিংস
+        # শুধুমাত্র সঠিক ব্রাউজার নাম ব্যবহার করুন
         browser_options = [
             {'browser': 'chrome', 'platform': 'windows', 'mobile': False, 'desktop': True},
             {'browser': 'firefox', 'platform': 'windows', 'mobile': False, 'desktop': True},
-            {'browser': 'chrome', 'platform': 'linux', 'mobile': False, 'desktop': True},
-            {'browser': 'safari', 'platform': 'macos', 'mobile': False, 'desktop': True}
+            {'browser': 'chrome', 'platform': 'linux', 'mobile': False, 'desktop': True}
         ]
         
         selected_browser = random.choice(browser_options)
@@ -46,9 +45,7 @@ def create_session():
         # Cloudscraper সেশন তৈরি
         scraper = cloudscraper.create_scraper(
             browser=selected_browser,
-            interpreter='js2py',
-            delay=15,
-            allow_brotli=True
+            delay=10
         )
         
         # স্ট্যান্ডার্ড headers সেট
@@ -58,12 +55,7 @@ def create_session():
             'Accept-Encoding': 'gzip, deflate, br',
             'DNT': '1',
             'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
-            'User-Agent': ua.random,
-            'X-Forwarded-For': f'{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}'
+            'User-Agent': ua.random
         })
         
         return scraper
@@ -71,13 +63,23 @@ def create_session():
         print(f'{Y} [!] Session তৈরি করতে সমস্যা: {e}{D}')
         return None
 
-def init_session_pool(size=5):
-    """সেশন পool তৈরি করে"""
+def init_session_pool(size=2):
+    """সেশন পুল তৈরি করে"""
     global session_pool
-    for _ in range(size):
+    session_pool = []  # আগের সেশনগুলো ক্লিয়ার করুন
+    
+    print(f'{C} [*] সেশন পুল তৈরি হচ্ছে...{D}')
+    
+    for i in range(size):
+        print(f'{Y} [*] সেশন {i+1} তৈরি হচ্ছে...{D}')
         session = create_session()
         if session:
             session_pool.append(session)
+            print(f'{G} [✓] সেশন {i+1} তৈরি হয়েছে{D}')
+        else:
+            print(f'{R} [✗] সেশন {i+1} তৈরি ব্যর্থ{D}')
+        time.sleep(1)
+    
     return len(session_pool)
 
 def get_session():
@@ -95,17 +97,9 @@ def username_gen(names, start, end):
     name_list = [name.strip() for name in names.split(',') if name.strip()]
     
     for name in name_list:
-        # বিভিন্ন প্যাটার্নে ইউজারনেম তৈরি
-        patterns = [
-            f'{name.lower()}{num} | {name.capitalize()}',  # sadek1 | Sadek
-            f'{name.lower()}{num:03d} | {name.capitalize()}',  # sadek001 | Sadek
-            f'{name.lower()}_{num} | {name.capitalize()}',  # sadek_1 | Sadek
-            f'{name.lower()}.{num} | {name.capitalize()}',  # sadek.1 | Sadek
-        ]
-        
         for num in range(start, end + 1):
-            pattern = random.choice(patterns)
-            username = pattern.format(num=num)
+            # সঠিক ফরম্যাটে ইউজারনেম তৈরি
+            username = f'{name.lower()}{num} | {name.capitalize()}'
             usernames.append(username)
     
     random.shuffle(usernames)
@@ -115,30 +109,21 @@ def checker(uname):
     """ইউজারনেম চেক করার মূল ফাংশন"""
     session = get_session()
     if not session:
+        print(f'{R} [!] সেশন পাওয়া যায়নি{D}')
         return False
     
-    # বিভিন্ন API endpoint try করবে
-    endpoints = [
-        'https://baji999.net/api/wv/v1/user/registerPreCheck',
-        'https://baji999.live/api/wv/v1/user/registerPreCheck',
-        'https://baji999.cc/api/wv/v1/user/registerPreCheck'
-    ]
+    url = 'https://baji999.net/api/wv/v1/user/registerPreCheck'
     
-    url = random.choice(endpoints)
-    
-    # র‍্যান্ডম ফোন নম্বর জেনারেট
-    phone_prefixes = ['17', '18', '19', '13', '14', '15', '16']
-    phone = f"{random.choice(phone_prefixes)}{random.randint(10000000, 99999999)}"
+    # র‍্যান্ডম ফোন নম্বর
+    phone = f"1347{random.randint(100000, 999999)}"
     
     headers = {
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9,bn;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
         'Content-Type': 'application/json',
         'Origin': 'https://baji999.net',
         'Referer': 'https://baji999.net/bd/en/register',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
+        'X-Requested-With': 'XMLHttpRequest'
     }
 
     json_data = {
@@ -154,26 +139,16 @@ def checker(uname):
     }
 
     retry_count = 0
-    max_retries = 3
+    max_retries = 2
     
     while retry_count < max_retries:
         try:
-            # র‍্যান্ডম বিরতি (Anti-Detection)
-            time.sleep(random.uniform(3, 7))
-            
-            response = session.post(url, json=json_data, headers=headers, timeout=25, allow_redirects=False)
+            response = session.post(url, json=json_data, headers=headers, timeout=20)
             
             if response.status_code == 403:
                 print(f'{R} [!] Cloudflare Blocked. Retry {retry_count + 1}/{max_retries}{D}')
                 retry_count += 1
-                
-                # নতুন সেশন তৈরি
-                session = create_session()
-                if not session:
-                    time.sleep(30)
-                    continue
-                    
-                time.sleep(15 * retry_count)  # এক্সপোনেনশিয়াল ব্যাকঅফ
+                time.sleep(10 * retry_count)
                 continue
                 
             elif response.status_code == 200:
@@ -183,82 +158,77 @@ def checker(uname):
                     if data.get('status') == 'F0003':
                         return True
                     elif data.get('status') == 'S0001':
-                        print(f'{Y} [!] Rate Limit. Waiting...{D}')
-                        time.sleep(45)
+                        print(f'{Y} [!] Rate Limit{D}')
+                        time.sleep(20)
                         continue
                     else:
                         return False
                         
-                except json.JSONDecodeError:
+                except:
                     return False
             else:
-                print(f'{Y} [!] Status Code: {response.status_code}{D}')
                 return False
                 
-        except requests.exceptions.ConnectionError:
-            print(f'{Y} [!] Connection Error. Retrying...{D}')
-            time.sleep(10)
-            retry_count += 1
-            continue
-            
-        except requests.exceptions.Timeout:
-            print(f'{Y} [!] Timeout. Retrying...{D}')
-            time.sleep(8)
-            retry_count += 1
-            continue
-            
         except Exception as e:
-            print(f'{R} [!] Error: {str(e)[:50]}{D}')
-            return False
+            print(f'{Y} [!] Error: {str(e)[:50]}{D}')
+            retry_count += 1
+            time.sleep(5)
+            continue
     
     return False
 
 def check_username(username):
     """ইউজারনেম চেক এবং সেভ করে"""
-    uname = username.split('|')[0].strip() if '|' in username else username.strip()
-    
-    print(f'{C} [*] Checking: {uname}{D}')
-    
-    if checker(uname):
-        print(f'{BOLD}{G} [✓] VALID: {uname}{D}')
-        with file_lock:
-            with open('valid_usernames.txt', 'a', encoding='utf-8') as f:
-                f.write(f'{username}\n')
+    try:
+        uname = username.split('|')[0].strip() if '|' in username else username.strip()
         
-        # প্রতি ভ্যালিড ইউজারের পর বিরতি
-        time.sleep(random.uniform(5, 10))
-    else:
-        print(f'{R} [✗] Invalid: {uname}{D}')
+        print(f'{C} [*] Checking: {uname}{D}')
+        
+        if checker(uname):
+            print(f'{BOLD}{G} [✓] VALID: {uname}{D}')
+            with file_lock:
+                with open('valid_usernames.txt', 'a', encoding='utf-8') as f:
+                    f.write(f'{username}\n')
+            
+            time.sleep(random.uniform(3, 6))
+        else:
+            print(f'{R} [✗] Invalid: {uname}{D}')
+    except Exception as e:
+        print(f'{Y} [!] Error in check_username: {e}{D}')
 
 def main():
     logo()
     
-    # সেশন পool initialize
-    print(f'{C} [*] সেশন পool তৈরি হচ্ছে...{D}')
-    pool_size = init_session_pool(3)
-    print(f'{G} [✓] {pool_size} টি সেশন তৈরি হয়েছে{D}')
+    # সেশন পুল initialize (শুধু ২ টি সেশন)
+    pool_size = init_session_pool(2)
+    
+    if pool_size == 0:
+        print(f'{R} [!] কোন সেশন তৈরি হয়নি। প্রোগ্রাম বন্ধ হচ্ছে...{D}')
+        return
     
     # ইনপুট নেওয়া
     names = input(f'{BOLD}{G} নাম লিখুন (যেমন: Sadek,Tanvir,Rahim) : {D}')
     start = int(input(f'{BOLD}{Y} শুরু নাম্বার : '))
     end = int(input(f'{BOLD}{Y} শেষ নাম্বার : '))
     
-    print(f'\n{G} [1] স্লো (সবচেয়ে নিরাপদ)\n{Y} [2] মিডিয়াম\n{R} [3] ফাস্ট (ঝুঁকিপূর্ণ){D}')
+    print(f'\n{G} [1] স্লো (নিরাপদ)\n{Y} [2] মিডিয়াম\n{R} [3] ফাস্ট{D}')
     print(f'{C} [4] আল্ট্রা স্লো (403 ফিক্স){D}')
     
     speed = int(input(f'\n{C} স্পিড নির্বাচন করুন : {D}'))
     
     # স্পিড সেটিংস
-    speed_config = {
-        1: {'workers': 1, 'delay': 5},
-        2: {'workers': 2, 'delay': 3},
-        3: {'workers': 3, 'delay': 2},
-        4: {'workers': 1, 'delay': 8}
-    }
-    
-    config = speed_config.get(speed, speed_config[4])
-    max_workers = config['workers']
-    base_delay = config['delay']
+    if speed == 1:
+        max_workers = 1
+        base_delay = 5
+    elif speed == 2:
+        max_workers = 2
+        base_delay = 3
+    elif speed == 3:
+        max_workers = 3
+        base_delay = 2
+    else:
+        max_workers = 1
+        base_delay = 8
 
     # ইউজারনেম জেনারেট
     usernames = username_gen(names, start, end)
@@ -269,7 +239,7 @@ def main():
     print(f'বিরতি: {base_delay} সেকেন্ড')
     print(f'{"="*50}{D}\n')
     
-    time.sleep(3)
+    time.sleep(2)
     
     # চেকিং শুরু
     valid_count = 0
@@ -278,10 +248,8 @@ def main():
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = []
         for username in usernames:
-            # প্রতিটি রিকোয়েস্টের আগে বিরতি
-            delay = base_delay + random.uniform(1, 3)
-            time.sleep(delay)
-            
+            # বিরতি দিয়ে রিকোয়েস্ট পাঠান
+            time.sleep(base_delay)
             future = executor.submit(check_username, username)
             futures.append(future)
         
@@ -298,11 +266,18 @@ def main():
 
 if __name__ == '__main__':
     try:
-        # প্রয়োজনীয় প্যাকেজ ইন্সটল চেক
-        required_packages = ['cloudscraper', 'fake-useragent']
+        # প্রয়োজনীয় প্যাকেজ ইন্সটল করা আছে কিনা চেক করুন
+        required_packages = ['cloudscraper', 'fake-useragent', 'requests']
+        
+        # valid_usernames.txt ফাইল তৈরি করুন
+        if not os.path.exists('valid_usernames.txt'):
+            with open('valid_usernames.txt', 'w') as f:
+                pass
+        
         main()
     except KeyboardInterrupt:
         print(f'\n{Y} [!] প্রোগ্রাম বন্ধ করা হচ্ছে...{D}')
     except Exception as e:
         print(f'{R} [!] Error: {e}{D}')
-        print(f'{Y} টিপস: "pip install cloudscraper fake-useragent" রান করুন{D}')
+        print(f'{Y} টিপস: নিচের কমান্ড রান করুন:{D}')
+        print(f'{C} pip install cloudscraper fake-useragent requests{D}')
