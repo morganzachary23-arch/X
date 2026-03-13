@@ -28,8 +28,8 @@ def username_gen(names, start, end):
 def checker(uname):
     while True:
         try:
-            headers = {'sec-ch-ua': '\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"', 'sec-ch-ua-mobile': '?1', 'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36', 'sec-ch-ua-arch': '\"\"', 'Content-Type': 'application/json', 'sec-ch-ua-full-version': '\"139.0.7339.0\"', 'Accept': 'application/json, text/plain, */*', 'sec-ch-ua-platform-version': '\"14.0.0\"', 'Referer': 'https://baji999.net/bd/en/register', 'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 'sec-ch-ua-bitness': '\"\"', 'sec-ch-ua-model': '\"LE2101\"', 'sec-ch-ua-platform': '\"Android\"'}
-            url = 'https://baji999.net/api/wv/v1/user/registerPreCheck'
+            headers = {'sec-ch-ua': '\"Chromium\";v=\"139\", \"Not;A=Brand\";v=\"99\"', 'sec-ch-ua-mobile': '?1', 'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36', 'sec-ch-ua-arch': '\"\"', 'Content-Type': 'application/json', 'sec-ch-ua-full-version': '\"139.0.7339.0\"', 'Accept': 'application/json, text/plain, */*', 'sec-ch-ua-platform-version': '\"14.0.0\"', 'Referer': 'https://bj88.live/bd/en/register', 'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 'sec-ch-ua-bitness': '\"\"', 'sec-ch-ua-model': '\"LE2101\"', 'sec-ch-ua-platform': '\"Android\"'}
+            url = 'https://bj88.live/api/wv/v1/user/registerPreCheck'
             json_data = {'languageTypeId': 1, 'currencyTypeId': 8, 'userId': uname, 'phone': '1347054625', 'friendReferrerCode': '', 'captcha': '', 'callingCode': '880', 'registerTypeId': 0, 'random': str(random.randint(1000, 9999))}
             conn = http.client.HTTPSConnection('baji999.net')
             conn.request('POST', '/api/wv/v1/user/registerPreCheck', json.dumps(json_data), headers)
