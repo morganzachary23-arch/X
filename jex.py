@@ -37,13 +37,13 @@ def checker(uname):
                 'sec-ch-ua-full-version': '\"139.0.7339.0\"', 
                 'Accept': 'application/json, text/plain, */*', 
                 'sec-ch-ua-platform-version': '\"14.0.0\"', 
-                'Referer': 'https://jeetbuzz.me/bd/en/register', 
+                'Referer': 'https://j8c8899.com/bd/en/register', 
                 'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 
                 'sec-ch-ua-bitness': '\"\"', 
                 'sec-ch-ua-model': '\"LE2101\"', 
                 'sec-ch-ua-platform': '\"Android\"'
             }
-            url = 'https://jeetbuzz.me/api/wv/v1/user/registerPreCheck'
+            url = 'https://j8c8899.com/api/wv/v1/user/registerPreCheck'
             json_data = {
                 'languageTypeId': 1, 
                 'currencyTypeId': 8, 
@@ -55,7 +55,7 @@ def checker(uname):
                 'registerTypeId': 0, 
                 'random': str(random.randint(1000, 9999))
             }
-            conn = http.client.HTTPSConnection('jeetbuzz.me')
+            conn = http.client.HTTPSConnection('j8c8899.com')
             conn.request('POST', '/api/wv/v1/user/registerPreCheck', json.dumps(json_data), headers)
             response = conn.getresponse()
             data = json.loads(response.read())
@@ -146,3 +146,4 @@ if __name__ == '__main__':
     setup_username()
     switch()
     main()
+
