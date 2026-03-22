@@ -1,3 +1,4 @@
+
 import requests
 import random
 import http.client
@@ -37,13 +38,13 @@ def checker(uname):
                 'sec-ch-ua-full-version': '\"139.0.7339.0\"', 
                 'Accept': 'application/json, text/plain, */*', 
                 'sec-ch-ua-platform-version': '\"14.0.0\"', 
-                'Referer': 'https://jeetbuzz.org/bd/en/register', 
+                'Referer': 'https://jeetbuzz66.me/bd/en/register', 
                 'sec-ch-ua-full-version-list': '\"Chromium\";v=\"139.0.7339.0\", \"Not;A=Brand\";v=\"99.0.0.0\"', 
                 'sec-ch-ua-bitness': '\"\"', 
                 'sec-ch-ua-model': '\"LE2101\"', 
                 'sec-ch-ua-platform': '\"Android\"'
             }
-            url = 'https://jeetbuzz.org/api/wv/v1/user/registerPreCheck'
+            url = 'https://jeetbuzz66.me/api/wv/v1/user/registerPreCheck'
             json_data = {
                 'languageTypeId': 1, 
                 'currencyTypeId': 8, 
@@ -55,7 +56,7 @@ def checker(uname):
                 'registerTypeId': 0, 
                 'random': str(random.randint(1000, 9999))
             }
-            conn = http.client.HTTPSConnection('jeetbuzz.org')
+            conn = http.client.HTTPSConnection('jeetbuzz66.me')
             conn.request('POST', '/api/wv/v1/user/registerPreCheck', json.dumps(json_data), headers)
             response = conn.getresponse()
             data = json.loads(response.read())
